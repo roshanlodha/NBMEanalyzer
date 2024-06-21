@@ -9,8 +9,11 @@ from tqdm import tqdm
 csv_file_path = './Questions_List.csv'
 data = pd.read_csv(csv_file_path)
 
-# Filter the data to only include rows where the question was answered incorrectly
-incorrect_data = data[data['Correct / Incorrect'] == 'Incorrect']
+# Filter the data to only include questions of interest
+#questions_data = data[data['Correct / Incorrect'] == 'Incorrect'] # incorrect questions only
+
+topics_of_interest = [' infectious/immune/inflammatory disorders', ' bacterial infections', ' traumatic and mechanical disorders', ' congenital disorders']
+questions_data = data[data['Subtopic'].isin(topics_of_interest)] # all questions on a given topic
 
 # Function to extract text and images from PDF
 def extract_text_and_images_from_pdf(pdf_path, output_dir, question_id):
@@ -29,7 +32,7 @@ def extract_text_and_images_from_pdf(pdf_path, output_dir, question_id):
     return text, images
 
 # Create a directory for extracted images
-output_dir = 'extracted_images'
+output_dir = './output/extracted_images'
 os.makedirs(output_dir, exist_ok=True)
 
 # HTML content initialization
@@ -58,7 +61,7 @@ html_content = """
 """
 
 # Process each row in the filtered data with progress tracking
-for index, row in tqdm(incorrect_data.iterrows(), total=incorrect_data.shape[0], desc="Processing questions"):
+for index, row in tqdm(questions_data.iterrows(), total=questions_data.shape[0], desc="Processing questions"):
     pdf_url = row['Answer Explanation']
     question_id = row['Question Id']
     content_topic = row['Content Topic']
@@ -122,7 +125,7 @@ html_content += """
 """
 
 # Write the HTML content to a file
-with open('questions.html', 'w') as html_file:
+with open('./output/questions.html', 'w') as html_file:
     html_file.write(html_content)
 
 print("Interactive HTML file 'questions.html' has been created.")
