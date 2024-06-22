@@ -19,26 +19,29 @@ Install the required Python packages using pip:
 pip install pandas requests pdfplumber tqdm
 ```
 ## Usage
-Place the Questions_List.csv file in the same directory as the script.
+Place the `Questions_List.csv` file in the same directory as the script. This file should be downloaded from the NBME insights website under the "Question Details" tab.
 
-Run the script:
+### stat.py
+First, run the `stat.py` script:
+```
+python ./scripts/stat.py
+```
+This script will generate and display useful performance statistics as well as create a new `Questions_List.csv` file that is required for `review.py`. 
+
+### review.py
+Next, run the `review.py` script:
 ```
 python ./scripts/review.py
 ```
 The script will process the questions, download the associated PDFs, extract text and images, and generate an interactive HTML file named questions.html in the same directory.
 
-## Output
-The output will be an HTML file named questions.html that includes:
+The script's progress will be shown in the terminal.
+
+#### Output
+The output of `review.py` will be an HTML file named `questions.html` that includes:
 
 - Question text
 - Images extracted from the PDF, if any
 - Answer options
 - Content Topic and Content Description
 - Interactive functionality to check answers and view explanations
-
-### Progress Tracker
-The script includes a progress tracker that shows the processing status of each question.
-
-## Other Scripts
-### stats.py
-### process.py

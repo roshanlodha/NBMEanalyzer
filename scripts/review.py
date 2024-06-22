@@ -10,10 +10,11 @@ csv_file_path = './output/Questions_List.csv'
 data = pd.read_csv(csv_file_path)
 
 # Filter the data to only include questions of interest
-#questions_data = data[data['Correct / Incorrect'] == 'Incorrect'] # incorrect questions only
+questions_data = data[data['Correct / Incorrect'] == 'Incorrect'] # incorrect questions only
 
-topics_of_interest = [' infectious/immune/inflammatory disorders']
-questions_data = data[data['Subtopic'].isin(topics_of_interest)] # all questions on a given topic
+# Filter the data to only topics of interest (these must be defined manually)
+#topics_of_interest = [' infectious/immune/inflammatory disorders']
+#questions_data = data[data['Subtopic'].isin(topics_of_interest)] # all questions on a given topic
 
 # Function to extract text and images from PDF
 def extract_text_and_images_from_pdf(pdf_path, output_dir, question_id):
