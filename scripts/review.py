@@ -6,13 +6,13 @@ import re
 from tqdm import tqdm
 
 # Load the CSV file
-csv_file_path = './Questions_List.csv'
+csv_file_path = './output/Questions_List.csv'
 data = pd.read_csv(csv_file_path)
 
 # Filter the data to only include questions of interest
 #questions_data = data[data['Correct / Incorrect'] == 'Incorrect'] # incorrect questions only
 
-topics_of_interest = [' infectious/immune/inflammatory disorders', ' bacterial infections', ' traumatic and mechanical disorders', ' congenital disorders']
+topics_of_interest = [' infectious/immune/inflammatory disorders']
 questions_data = data[data['Subtopic'].isin(topics_of_interest)] # all questions on a given topic
 
 # Function to extract text and images from PDF
@@ -34,6 +34,9 @@ def extract_text_and_images_from_pdf(pdf_path, output_dir, question_id):
 # Create a directory for extracted images
 output_dir = './output/extracted_images'
 os.makedirs(output_dir, exist_ok=True)
+
+explanations_dir = './output/explanations'
+os.makedirs(explanations_dir, exist_ok=True)
 
 # HTML content initialization
 html_content = """
@@ -76,8 +79,10 @@ for index, row in tqdm(questions_data.iterrows(), total=questions_data.shape[0],
     # Extract text and images from the downloaded PDF
     pdf_text, pdf_images = extract_text_and_images_from_pdf(pdf_file_path, output_dir, question_id)
 
-    # Clean up by removing the downloaded PDF file
-    os.remove(pdf_file_path)
+    # Move the explanations to a dedicated folder
+    new_pdf_url = os.path.join(explanations_dir, question_id + ".pdf")
+    os.rename(pdf_file_path, new_pdf_url)
+    new_pdf_url = os.path.join("./explanations", question_id + ".pdf") # poor error handling -- FIX later
 
     # Parse the text to extract the question, choices, correct answer
     lines = pdf_text.split("\n")
@@ -111,7 +116,7 @@ for index, row in tqdm(questions_data.iterrows(), total=questions_data.shape[0],
     html_content += "<h3>Options:</h3>\n<ul>\n"
     for choice in choices:
         choice_letter = choice.split('.')[0]
-        html_content += f"<li><a href='javascript:void(0)' onclick=\"checkAnswer('{choice_letter}', '{correct_answer}', '{pdf_url}')\">{choice}</a></li>\n"
+        html_content += f"<li><a href='javascript:void(0)' onclick=\"checkAnswer('{choice_letter}', '{correct_answer}', '{new_pdf_url}')\">{choice}</a></li>\n"
     html_content += "</ul>\n"
 
     # Add the content topic and description below the answer options
