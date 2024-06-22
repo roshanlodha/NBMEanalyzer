@@ -47,6 +47,14 @@ html_content = """
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Questions</title>
+    <style>
+        .highlight {
+            background-color: yellow;
+        }
+        .strikethrough {
+            text-decoration: line-through;
+        }
+    </style>
     <script>
         function checkAnswer(selected, correct, explanationUrl) {
             if (selected === correct) {
@@ -54,9 +62,62 @@ html_content = """
                     window.open(explanationUrl, '_blank');
                 }
             } else {
-                if (confirm("Incorrect! Would you like to view the explanation?")) {
-                    window.open(explanationUrl, '_blank');
+                alert("Incorrect, please try again.");
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.body.addEventListener('mouseup', () => {
+                const selectedText = window.getSelection().toString();
+                if (selectedText.length > 0) {
+                    highlightSelection();
                 }
+            });
+
+            document.body.addEventListener('click', (event) => {
+                if (event.target.classList.contains('highlight')) {
+                    removeHighlight(event.target);
+                }
+            });
+
+            document.body.addEventListener('contextmenu', (event) => {
+                event.preventDefault();
+                const line = getLineAtPoint(event.clientX, event.clientY);
+                if (line) {
+                    toggleStrikethrough(line);
+                }
+            });
+        });
+
+        function highlightSelection() {
+            const selection = window.getSelection();
+            if (!selection.rangeCount) return false;
+            const range = selection.getRangeAt(0);
+            const span = document.createElement('span');
+            span.className = 'highlight';
+            range.surroundContents(span);
+            selection.removeAllRanges();
+        }
+
+        function removeHighlight(element) {
+            const parent = element.parentNode;
+            while (element.firstChild) {
+                parent.insertBefore(element.firstChild, element);
+            }
+            parent.removeChild(element);
+        }
+
+        function getLineAtPoint(x, y) {
+            const range = document.caretRangeFromPoint(x, y);
+            const lineElement = range.startContainer.parentNode;
+            return lineElement;
+        }
+
+        function toggleStrikethrough(element) {
+            if (element.classList.contains('strikethrough')) {
+                element.classList.remove('strikethrough');
+            } else {
+                element.classList.add('strikethrough');
             }
         }
     </script>
