@@ -13,8 +13,9 @@ data = pd.read_csv(csv_file_path)
 questions_data = data[data['Correct / Incorrect'] == 'Incorrect'] # incorrect questions only
 
 # Filter the data to only topics of interest (these must be defined manually)
-#topics_of_interest = [' infectious/immune/inflammatory disorders']
+#topics_of_interest = [' bacterial infections', ' congenital disorders', ' metabolic and regulatory disorders', ' diabetes mellitus', ' puerperium, including complications', ' hypersensitivity reactions', ' malignant and precancerous neoplasms', ' vitamin deficiencies and/or toxicities', ' hypertension', ' neoplasms', ' disorders of the liver', ' Immunologic and inflammatory disorders', ' diseases of the veins', ' disorders of the pleura, mediastinum, chest wall', ' psychotic disorders', ' failure/arrest, pulmonary vascular disorders', ' immunologic and inflammatory disorders']
 #questions_data = data[data['Subtopic'].isin(topics_of_interest)] # all questions on a given topic
+#questions_data = questions_data[questions_data['Correct / Incorrect'] == 'Correct'] # correct questions only
 
 # Function to extract text and images from PDF
 def extract_text_and_images_from_pdf(pdf_path, output_dir, question_id):
@@ -167,7 +168,7 @@ for index, row in tqdm(questions_data.iterrows(), total=questions_data.shape[0],
                 question.append(line)
 
     # Add the question text to the HTML content
-    html_content += "<h2>Question:</h2>\n"
+    html_content += "<h2>Question: " + index + "</h2>\n"
     html_content += f"<p>{' '.join(question)}</p>\n"
 
     # Add any images extracted from the PDF
@@ -182,6 +183,7 @@ for index, row in tqdm(questions_data.iterrows(), total=questions_data.shape[0],
     html_content += "</ul>\n"
 
     # Add the content topic and description below the answer options
+    html_content += f"<p><strong>Question ID:</strong> {question_id}</p>\n"
     html_content += f"<p><strong>Content Topic:</strong> {content_topic}</p>\n"
     html_content += f"<p><strong>Content Description:</strong> {content_description}</p>\n"
 
