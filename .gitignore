@@ -1,3 +1,9 @@
+report.html
+sample.csv
+.DS_Store
+*/.DS_Store
+plots/*.png
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
